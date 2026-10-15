@@ -1,0 +1,256 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#f6f4ef">
+  <title>CraftCopy - Local AI Listing Studio</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <header class="topbar">
+    <a class="brand" href="#">
+      <span class="brand-mark">✳</span> CraftCopy
+    </a>
+    <div class="top-note">
+      <span class="status-dot"></span>
+      Private by design · Runs in your browser
+    </div>
+  </header>
+
+  <main class="shell">
+    <section class="hero">
+      <div class="eyebrow">THE LITTLE STUDIO FOR BIG IDEAS</div>
+      <h1>Turn your products into<br><em>listings that sell.</em></h1>
+      <p class="hero-copy">
+        An AI copy assistant for makers, resellers, and small shops.
+        Create product titles, descriptions, and tags without sending
+        your product details to a remote AI service.
+      </p>
+      <div class="trust-row">
+        <span>✦ No API key</span>
+        <span>✦ No account</span>
+        <span>✦ Open model</span>
+      </div>
+    </section>
+
+    <section class="workspace">
+      <div class="panel">
+        <div class="panel-heading">
+          <div>
+            <div class="step-label">STEP 01</div>
+            <h2>Tell us about your product</h2>
+          </div>
+          <span class="mini-icon">↗</span>
+        </div>
+
+        <form id="listing-form">
+          <label for="product-name">Product name *</label>
+          <input id="product-name" required maxlength="100"
+            placeholder="e.g. Hand-painted ceramic mug">
+
+          <div class="field-grid">
+            <div>
+              <label for="category">Category</label>
+              <select id="category">
+                <option>Handmade</option>
+                <option>Home & living</option>
+                <option>Fashion</option>
+                <option>Jewellery</option>
+                <option>Art & prints</option>
+                <option>Vintage</option>
+                <option>Food</option>
+                <option>Other</option>
+              </select>
+            </div>
+            <div>
+              <label for="platform">Selling platform</label>
+              <select id="platform">
+                <option>Etsy</option>
+                <option>Instagram</option>
+                <option>eBay</option>
+                <option>Shopify</option>
+                <option>WhatsApp</option>
+                <option>My own website</option>
+              </select>
+            </div>
+          </div>
+
+          <label for="features">Features and details *</label>
+          <textarea id="features" required rows="4" maxlength="1200"
+            placeholder="Materials, size, colours, how it is made..."></textarea>
+
+          <div class="field-grid">
+            <div>
+              <label for="tone">Brand voice</label>
+              <select id="tone">
+                <option>Warm and friendly</option>
+                <option>Minimal and modern</option>
+                <option>Playful</option>
+                <option>Premium and elegant</option>
+                <option>Professional</option>
+              </select>
+            </div>
+            <div>
+              <label for="audience">Ideal customer</label>
+              <input id="audience" maxlength="120"
+                placeholder="e.g. thoughtful gift shoppers">
+            </div>
+          </div>
+
+          <label for="keywords">
+            Keywords <span class="optional">Optional</span>
+          </label>
+          <input id="keywords" maxlength="250"
+            placeholder="handmade, housewarming gift, pottery">
+
+          <button class="primary-button" id="generate-btn" type="submit">
+            <span>✦</span>
+            Generate my listing
+            <span class="button-arrow">→</span>
+          </button>
+
+          <p class="form-footnote">
+            Your product details stay in this browser.
+            The first model load needs an internet connection.
+          </p>
+        </form>
+      </div>
+
+      <div class="panel output-panel">
+        <div class="panel-heading">
+          <div>
+            <div class="step-label">STEP 02</div>
+            <h2>Your listing studio</h2>
+          </div>
+          <div class="ai-pill">
+            <span class="status-dot"></span>
+            <span id="model-status">AI model not loaded</span>
+          </div>
+        </div>
+
+        <div id="empty-state" class="empty-state">
+          <div class="empty-art">
+            <span>✳</span>
+            <span>✧</span>
+            <span>✦</span>
+            <div class="art-card">
+              <div></div><div></div><div></div>
+            </div>
+          </div>
+          <h3>Your next great listing starts here.</h3>
+          <p>
+            Enter your product details to generate a title,
+            description, and search tags.
+          </p>
+          <div class="output-benefits">
+            <span>01 Clear title</span>
+            <span>02 Product story</span>
+            <span>03 Search tags</span>
+          </div>
+        </div>
+
+        <div id="loading-state" class="loading-state hidden"
+          aria-live="polite">
+          <div class="loader"></div>
+          <h3 id="loading-title">Warming up your local AI...</h3>
+          <p id="loading-message">
+            The model may take some time to download on first use.
+          </p>
+        </div>
+
+        <div id="results" class="results hidden">
+          <div class="result-block">
+            <div class="result-label">
+              PRODUCT TITLE
+              <button class="copy-button" data-copy="result-title">Copy</button>
+            </div>
+            <div id="result-title" class="result-title"
+              contenteditable="true"></div>
+          </div>
+
+          <div class="result-block">
+            <div class="result-label">
+              PRODUCT DESCRIPTION
+              <button class="copy-button" data-copy="result-description">Copy</button>
+            </div>
+            <div id="result-description" class="result-description"
+              contenteditable="true"></div>
+          </div>
+
+          <div class="result-block">
+            <div class="result-label">
+              SEARCH TAGS
+              <button class="copy-button" data-copy="result-tags">Copy</button>
+            </div>
+            <div id="result-tags" class="tags" contenteditable="true"></div>
+          </div>
+
+          <div class="result-actions">
+            <button id="copy-all" class="secondary-button">
+              Copy full listing
+            </button>
+            <button id="download-txt" class="secondary-button">
+              Export .txt ↓
+            </button>
+          </div>
+          <p class="edit-note">
+            Edit the text and verify all product details before publishing.
+          </p>
+        </div>
+
+        <div id="error-message" class="error-message hidden"
+          role="alert"></div>
+      </div>
+    </section>
+
+    <section class="how-it-works">
+      <div>
+        <div class="step-label">WHY OPEN AI?</div>
+        <h2>Your work stays yours.</h2>
+      </div>
+
+      <div class="reason">
+        <span class="reason-number">01</span>
+        <div>
+          <h3>Private by default</h3>
+          <p>
+            Generation runs on your device after the model loads.
+            Product notes aren't sent to a hosted text-generation API.
+          </p>
+        </div>
+      </div>
+
+      <div class="reason">
+        <span class="reason-number">02</span>
+        <div>
+          <h3>No per-listing AI bill</h3>
+          <p>
+            No paid inference API key or per-request AI charge.
+            Your device still uses electricity and internet data.
+          </p>
+        </div>
+      </div>
+
+      <div class="reason">
+        <span class="reason-number">03</span>
+        <div>
+          <h3>Built to be changed</h3>
+          <p>
+            Change prompts, listing rules, or the compatible
+            open-weight model to suit a particular business.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <footer>
+      <span>CraftCopy © 2026</span>
+      <span>Made for independent sellers</span>
+    </footer>
+  </main>
+
+  <script type="module" src="app.js"></script>
+</body>
+</html>
